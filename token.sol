@@ -56,15 +56,21 @@ contract StandardToken is Token {
 contract HumanStandardToken is StandardToken {
     /* Public variables of the token */
     string public name; //名称: eg Simon Bucks
-    uint8 public decimals; //最多的小数位数，How many decimals to show. ie. There could 1000 base units with 3 decimals. Meaning 0.980 SBX =980 base units. It's like comparing 1 wei to 1 ether.
+    uint256 public decimals; //最多的小数位数，How many decimals to show. ie. There could 1000 base units with 3 decimals. Meaning 0.980 SBX =980 base units. It's like comparing 1 wei to 1 ether.
     string public symbol; //token简称: eg SBX
-    string public version = "H0.1";    //版本
-    constructor(uint256 _initialAmount, string _tokenName, uint8 _decimalUnits, string _tokenSymbol) public {
-        balances[msg.sender] = _initialAmount; //初始token数量给予消息发送者
-        totalSupply = _initialAmount; //设置初始总量
+    string public version = "V8";    //版本
+    
+    // 转换
+    function formatDecimals(uint256 _value) internal returns (uint256 ) {
+        return _value * 10 ** decimals;
+    }
+    
+    constructor(uint256 _initialAmount, string _tokenName, uint256 _decimalUnits, string _tokenSymbol) public {
         name = _tokenName; // token名称
         decimals = _decimalUnits; // 小数位数
         symbol = _tokenSymbol; // token简称
+        totalSupply = formatDecimals(_initialAmount); //设置初始总量
+        balances[msg.sender] = totalSupply; //初始token数量给予消息发送者
     }
     /* Approves and then calls the receiving contract */
     function approveAndCall(address _spender, uint256 _value, bytes _extraData) returns (bool success) {
